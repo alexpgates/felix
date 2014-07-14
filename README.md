@@ -14,7 +14,7 @@ This code is a few years old, but it has been updated to use the latest Twilio P
     - Users join by texting anything to the number, then following the directions.
 - Members can leave the group by sending: <code>-stop</code>.
 - Members can change their nicknames by sending: <code>-name</code> (new nickname).
-- Administrators get alerted when members join.
+- The group administrator get alerted when members join.
 - All messages are logged in the database.
 - Messages can contain up to 1600 characters.
 
@@ -44,8 +44,8 @@ This code is a few years old, but it has been updated to use the latest Twilio P
 
 ##### Join Flow
 
-<img src="https://dl.dropboxusercontent.com/u/2227623/group-texter-images/join-flow.png" width="300px">
+<img src="http://alexpgates.com/static/images/felix-join-flow.png" width="300px">
 
 ##### Use
 
-<img src="https://dl.dropboxusercontent.com/u/2227623/group-texter-images/use.png" width="300px">
+<img src="http://alexpgates.com/static/images/felix-use.png" width="300px">
