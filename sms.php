@@ -3,8 +3,8 @@ require "Services/Twilio.php";
 require "settings.php";
 
 // grab the number of the number that is texting in
-$from = $_REQUEST['From'];
-$body = trim($_REQUEST['Body']);
+$from = mysql_real_escape_string($_REQUEST['From']);
+$body = mysql_real_escape_string(trim($_REQUEST['Body']));
 
 // Check if the number exists in the database
 $query = "SELECT * FROM numbers WHERE number='$from'";
