@@ -1,0 +1,13 @@
+{
+    "name": "alexpgates/felix",
+    "description": "A quick and dirty way to manage SMS groups using PHP and Twilio.",
+    "authors": [
+        {
+            "name": "Alex Gates",
+            "email": "alex@whatcheer.com"
+        }
+    ],
+    "require": {
+			"twilio/sdk": "~3.12.0"
+    }
+}

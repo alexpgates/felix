@@ -1,5 +1,5 @@
 <?php
-require "Services/Twilio.php";
+require 'vendor/autoload.php';
 require "settings.php";
 
 // grab the number of the number that is texting in
