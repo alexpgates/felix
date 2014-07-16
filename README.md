@@ -38,7 +38,7 @@ This code is a few years old, but it has been updated to use the latest Twilio P
 ### To Do
 
 - This needs a better way for an admin to manage the users. Right now, you need to manage users directly in the database.
-- Yeah, it uses the depracated <code>mysql_connect()</code>. It should be updated to <code>mysqli_connect()</code> or pdo.
+- ~~Yeah, it uses the depracated <code>mysql_connect()</code>. It should be updated to <code>mysqli_connect()</code> or pdo.~~ (_Updated to mysqli on 7-15-2014_)
 
 ### Screenshots
 
