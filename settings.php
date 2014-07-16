@@ -1,6 +1,5 @@
 <?php
-
-// You must fill in these variables.
+// This file uses enviromnet variables by default. If you don't have that set up, you can just set these variables right here.
 
 // Set our AccountSid and AuthToken from twilio.com/user/account
 $AccountSid = $_ENV['TWILIO_ACCOUNT_SID'];
@@ -40,14 +39,5 @@ else {
 
 
 // no need to edit anything below this line
-
-
-$link = mysql_connect($mysql_host, $mysql_user, $mysql_pass);
-if (!$link) {
-    die('Could not connect: ' . mysql_error());
-}
-$db_selected = mysql_select_db($mysql_database_name, $link);
-if (!$db_selected) {
-    die ('Error selecting database_name : ' . mysql_error());
-}
+$link = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_database_name) or die("Error " . mysqli_error($link)); 
 ?>

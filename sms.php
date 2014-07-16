@@ -1,70 +1,69 @@
 <?php
 require 'vendor/autoload.php';
-require "settings.php";
+require 'settings.php';
 
 // grab the number of the number that is texting in
-$from = mysql_real_escape_string($_REQUEST['From']);
-$body = mysql_real_escape_string(trim($_REQUEST['Body']));
+$from = mysqli_real_escape_string($link, $_REQUEST['From']);
+$body = mysqli_real_escape_string($link, trim($_REQUEST['Body']));
 
 // Check if the number exists in the database
-$query = "SELECT * FROM numbers WHERE number='$from'";
-$result = mysql_query($query);
+$query = "SELECT * FROM numbers WHERE number='$from'" or die("MySQL Error:" . mysqli_error($link));
+$result = mysqli_query($link, $query); 
 // Check result
 if (!$result) {
-	$message  = 'Invalid query: ' . mysql_error() . "\n";
+	$message  = 'Invalid query: ' . mysqli_error($link) . "\n";
 	$message .= 'Whole query: ' . $query;
 	die($message);
 }
-$foundcount = mysql_num_rows($result);
+$foundcount = mysqli_num_rows($result);
 
 if($foundcount != 1){
-	// this user does not exist. Let's create an record in the database for the number, and reply asking for their name.
 	$add = "INSERT INTO numbers (
 	number) 
 	VALUES (
-	'$from')";
-	if (!mysql_query($add)){
-	  die('Error: ' . mysql_error());
+	'$from')" or die("MySQL Error:" . mysqli_error($link));
+	if (!mysqli_query($link, $add)){
+		die('Error: ' . mysqli_error($link));
 	}else{
 		$client = new Services_Twilio($AccountSid, $AuthToken);
-		$client->account->messages->sendMessage($caller_id, $from, 'Hello! It looks like you\'re new! To join the group, please reply to this message using only your name.');
+		$client->account->messages->sendMessage($caller_id, $from, 'Hello! It looks like you\'re new! To be added to the group, please reply to this message using only your name.');
 		die();
 	}
 }
 
 // this number already exists
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = mysqli_fetch_array($result)) {
 	$name = $row['name'];
 	$users_id = $row['id'];
 }
 
 if($name == ''){
 	// This is a new user. Lets add their name.
-	$name_to_set = mysql_real_escape_string($body);
+	$name_to_set = mysqli_real_escape_string($link, $body);
 
-	$update =  "UPDATE numbers SET name='$name_to_set' WHERE id='$users_id' LIMIT 1";
-	if (!mysql_query($update)){
-	  die('Error: ' . mysql_error());
-	}else{
-		$client = new Services_Twilio($AccountSid, $AuthToken);
-		$client->account->messages->sendMessage($caller_id, $from, 'Hi '.$body.'! You have been added to the list! A few things to remember:
+	$update =  "UPDATE numbers SET name='$name_to_set' WHERE id='$users_id' LIMIT 1" or die("MySQL Error:" . mysqli_error($link));
+			if (!mysqli_query($link, $update)){
+			  die('Error: ' . mysqli_error($link));
+			}else{
+				$client = new Services_Twilio($AccountSid, $AuthToken);
+				$client->account->messages->sendMessage($caller_id, $from, 'Hi '.$body.'! You have been added to the list! A few things to remember:
 1) Anything you send to this number will be forwarded to everyone in the group.
 2) To leave the group any time, reply with: -stop
 3) Have fun, and be nice!
 4) Please text '.$group_admin_name.' at '.$group_admin_number.' if you have any problems or questions!');
 
 		// get current user count
-		$query = "SELECT * FROM numbers";
-		$result = mysql_query($query);
+		$query = "SELECT * FROM numbers" or die("MySQL Error:" . mysqli_error($link));
+		$result = mysqli_query($link, $query);
 		// Check result
 		if (!$result) {
-			$message  = 'Invalid query: ' . mysql_error() . "\n";
+			$message  = 'Invalid query: ' . mysqli_error($link) . "\n";
 			$message .= 'Whole query: ' . $query;
 			die($message);
 		}
-		$total_users = mysql_num_rows($result);
+		$total_users = mysqli_num_rows($result);
 
-		// Let alex know there is a new user
+		// Let the admin know there is a new user
 		$client = new Services_Twilio($AccountSid, $AuthToken);
 		$client->account->messages->sendMessage($caller_id, $group_admin_number, 'FYI '.$body.' has joined the group with the number '.$from.'. Total users: '.$total_users.'.');
 		}
@@ -80,32 +79,32 @@ if($word_array[0] == '-name'){
 	// the user wants to change their name
 	
 	// get a list of forbidden names
-	$fquery = "SELECT name FROM numbers";
-	$fresult = mysql_query($fquery);
+	$fquery = "SELECT name FROM numbers" or die("MySQL Error:" . mysqli_error($link));
+	$fresult = mysqli_query($link, $fquery);
 	// Check result
 	if (!$fresult) {
-		$message  = 'Invalid query: ' . mysql_error() . "\n";
-		$message .= 'Whole query: ' . $query;
+		$message  = 'Invalid query: ' . mysqli_error($link) . "\n";
+		$message .= 'Whole query: ' . $fquery;
 		die($message);
 	}
 	$forbidden_names = array();
-	while ($frow = mysql_fetch_assoc($fresult)) {
+	while ($frow = mysqli_fetch_array($fresult)) {
 		$forbidden_names[] = $frow['name'];
-	}	
+	}
 	
 	
 	// get their current name
-	$oquery = "SELECT name FROM numbers WHERE number='$from'";
-	$oresult = mysql_query($oquery);
+	$oquery = "SELECT name FROM numbers WHERE number='$from'" or die("MySQL Error:" . mysqli_error($link));
+	$oresult = mysqli_query($link, $oquery);
 	// Check result
 	if (!$oresult) {
-		$message  = 'Invalid query: ' . mysql_error() . "\n";
+		$message  = 'Invalid query: ' . mysqli_error($link) . "\n";
 		$message .= 'Whole query: ' . $oquery;
 		die($message);
 	}
-	while ($orow = mysql_fetch_assoc($oresult)) {
+	while ($orow = mysqli_fetch_array($oresult)) {
 		$old_name = $orow['name'];
-	}	
+	}
 	
 	// first get what they want their name to be - it could be multiple words.
 	// kick off the first -name
@@ -133,20 +132,20 @@ if($word_array[0] == '-name'){
 	}
 	
 	// now we update the database with the new name
-	$update =  "UPDATE numbers SET name='$new_name' WHERE number='$from' LIMIT 1";
-	if (!mysql_query($update)){
-	  die('Error: ' . mysql_error());
+	$update =  "UPDATE numbers SET name='$new_name' WHERE number='$from' LIMIT 1" or die("MySQL Error:" . mysqli_error($link));
+	if (!mysqli_query($link, $update)){
+	  die('Error: ' . mysqli_error($link));
 	}else{
 		// now we get the numbers of everyone in the database that isn't the sender
-		$t_query = "SELECT * FROM numbers";
-		$t_result = mysql_query($t_query);
+		$t_query = "SELECT * FROM numbers" or die("MySQL Error:" . mysqli_error($link));
+		$t_result = mysqli_query($link, $t_query);
 		// Check result
 		if (!$t_result) {
-			$message  = 'Invalid query: ' . mysql_error() . "\n";
+			$message  = 'Invalid query: ' . mysqli_error($link) . "\n";
 			$message .= 'Whole query: ' . $t_query;
 			die($message);
 		}
-		while ($t_row = mysql_fetch_assoc($t_result)) {
+		while ($t_row = mysqli_fetch_array($t_result)) {
 			$number = $t_row['number'];
 			// send the sms to this number:
 			$client = new Services_Twilio($AccountSid, $AuthToken);
@@ -159,9 +158,9 @@ if($word_array[0] == '-name'){
 }
 
 if($word_array[0] == '-stop'){
-	$query = "DELETE FROM numbers WHERE number = '$from' LIMIT 1";
-	if (!mysql_query($query)){
-	  die('Error: ' . mysql_error());
+	$query = "DELETE FROM numbers WHERE number = '$from' LIMIT 1" or die("MySQL Error:" . mysqli_error($link));;
+	if (!mysqli_query($link, $query)){
+	  die('Error: ' . mysqli_error($link));
 	}
 	$client = new Services_Twilio($AccountSid, $AuthToken);
 	$client->account->messages->sendMessage($caller_id, $from, 'You have successfully unsubscribed! So long! : )');
@@ -173,19 +172,19 @@ if($word_array[0] == '-stop'){
 $message = $name.': '.$body;
 
 // now we get the numbers of everyone in the database that isn't the sender
-$t_query = "SELECT * FROM numbers WHERE number != '$from'";
-$t_result = mysql_query($t_query);
+$t_query = "SELECT * FROM numbers WHERE number != '$from'" or die("MySQL Error:" . mysqli_error($link));
+$t_result = mysqli_query($link, $t_query);
 // Check result
 if (!$t_result) {
-	$message  = 'Invalid query: ' . mysql_error() . "\n";
-	$message .= 'Whole query: ' . $query;
+	$message  = 'Invalid query: ' . mysqli_error($link) . "\n";
+	$message .= 'Whole query: ' . $t_query;
 	die($message);
 }
-while ($t_row = mysql_fetch_assoc($t_result)) {
+while ($t_row = mysqli_fetch_array($t_result)) {
 	$number = $t_row['number'];
 	// send the sms to this number:
 	$client = new Services_Twilio($AccountSid, $AuthToken);
-	$client->account->messages->sendMessage($caller_id, $number, $message);
+	$client->account->messages->sendMessage($caller_id, $number, $name.': '.$body);
 }
 
 // log this in the database
@@ -193,8 +192,8 @@ while ($t_row = mysql_fetch_assoc($t_result)) {
 $add = "INSERT INTO messages (
 message) 
 VALUES (
-'$message')";
-if (!mysql_query($add)){
-  die('Error: ' . mysql_error());
+'$message')" or die("MySQL Error:" . mysqli_error($link));
+if (!mysqli_query($link, $add)){
+  die('Error: ' . mysqli_error($link));
 }
 ?>
