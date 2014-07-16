@@ -1,5 +1,6 @@
 <?php
-require 'vendor/autoload.php';
+require 'vendor/autoload.php'; // if using Composer
+// require '/path/to/Twilio.php'; // if you aren't using Composer
 require 'settings.php';
 
 // grab the number of the number that is texting in
