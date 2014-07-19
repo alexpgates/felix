@@ -185,7 +185,7 @@ while ($t_row = mysqli_fetch_array($t_result)) {
 	$number = $t_row['number'];
 	// send the sms to this number:
 	$client = new Services_Twilio($AccountSid, $AuthToken);
-	$client->account->messages->sendMessage($caller_id, $number, $name.': '.$body);
+	$client->account->messages->sendMessage($caller_id, $number, stripslashes($name).': '.stripslashes($body));
 }
 
 // log this in the database
