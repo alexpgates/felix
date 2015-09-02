@@ -44,8 +44,8 @@ This code is a few years old, but it has been updated to use the latest Twilio P
 
 ##### Join Flow
 
-<img src="http://alexpgates.com/static/images/felix-join-flow.png" width="300px">
+<img src="http://alexpgates.com/images/felix-join-flow.png" width="300px">
 
 ##### Use
 
-<img src="http://alexpgates.com/static/images/felix-use.png" width="300px">
+<img src="http://alexpgates.com/images/felix-use.png" width="300px">
